@@ -1,0 +1,56 @@
+name: Deploy MCP API
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/Customers.MCP/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./src/Customers.MCP/Customers.MCP.csproj
+
+      - name: Build
+        run: dotnet build ./src/Customers.MCP/Customers.MCP.csproj --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ./src/Customers.MCP/Customers.MCP.csproj --configuration Release --no-build --output ./publish
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        run: |
+          cd ./publish
+          zip -r deploy.zip .
+          az webapp deployment source config-zip \
+            --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+            --name ${{ vars.PROJECT_NAME }}-mcpapi \
+            --src deploy.zip
+
+      - name: Verify Deployment
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Web App: ${{ vars.PROJECT_NAME }}-mcpapi"
+          echo "URL: https://${{ vars.PROJECT_NAME }}-mcpapi.azurewebsites.net"

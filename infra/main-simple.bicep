@@ -137,6 +137,14 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
       numberOfWorkers: 1
       linuxFxVersion: 'DOTNETCORE|10.0'
       appSettings: [
+        {
+          name: 'CosmosDb__Endpoint'
+          value: cosmosDbAccount.properties.documentEndpoint
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: applicationInsights.properties.ConnectionString
+        }
       ]
     }
   }
@@ -428,3 +436,5 @@ output AZURE_SUBSCRIPTION_ID string = subscription().subscriptionId
 output RESOURCE_GROUP_NAME string = resourceGroup().name
 output APP_SERVICE_IDENTITY_PRINCIPAL_ID string = webApp.identity.principalId
 output APPLICATION_INSIGHTS_CONNECTION_STRING string = applicationInsights.properties.ConnectionString
+output COSMOS_DB_ENDPOINT string = cosmosDbAccount.properties.documentEndpoint
+output WEB_APP_NAME string = webApp.name
