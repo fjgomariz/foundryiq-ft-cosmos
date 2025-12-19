@@ -340,25 +340,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
     name: 'S0'
   }
 
-    resource foundryKeyVaultConnection 'connections@2025-06-01' = {
-      name: 'keyVaultConnection'
-      properties: {
-        category: 'AzureKeyVault'
-        target: keyVault.id
-        useWorkspaceManagedIdentity: false
-        authType: 'ManagedIdentity'
-        credentials: {
-            clientId: foundryProject.identity.principalId
-          }
-        isSharedToAll: true
-        metadata: {
-        ApiType: 'Azure'
-        ResourceId: keyVault.id
-        location: location
-      }
-      }
-    }
-
     resource storageConnection 'connections@2025-06-01' = {
       name: 'storageConnection'
       properties: {
@@ -387,25 +368,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
       properties: {
         description: 'Foundry ft Cosmos project'
         displayName: 'Foundry ft Cosmos'
-      }
-
-      resource projectKeyVaultConnection 'connections@2025-06-01' = {
-        name: 'projectKeyVaultConnection'
-        properties: {
-          category: 'AzureKeyVault'
-          authType: 'ManagedIdentity'
-          credentials: {
-            clientId: foundryProject.identity.principalId
-          }
-          target: keyVault.id
-          useWorkspaceManagedIdentity: true
-          isSharedToAll: true
-          metadata: {
-            ApiType: 'Azure'
-            ResourceId: keyVault.id
-            location: location
-          }
-        }
       }
 
       resource projectStorageConnection 'connections@2025-06-01' = {
