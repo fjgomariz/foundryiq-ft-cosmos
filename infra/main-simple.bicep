@@ -361,7 +361,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
     resource foundryProject 'projects@2025-06-01' = {
       name: projectName
       location: location
-      kind: 'AIServices'
       identity: {
         type: 'SystemAssigned'
       }
