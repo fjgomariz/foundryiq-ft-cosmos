@@ -335,6 +335,9 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
     publicNetworkAccess: 'Enabled'
     disableLocalAuth: true
   }
+  sku: {
+    name: 'S0'
+  }
 
     resource foundryKeyVaultConnection 'connections@2025-06-01' = {
       name: 'keyVaultConnection'
