@@ -322,6 +322,7 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
   tags: commonTags
   properties: {
     apiProperties: {}
+    customSubDomainName: '${projectName}-foundry'
     networkAcls: {
       defaultAction: 'Allow'
       virtualNetworkRules: []
@@ -345,6 +346,10 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
         category: 'AzureKeyVault'
         target: keyVault.id
         useWorkspaceManagedIdentity: false
+        authType: 'ManagedIdentity'
+        credentials: {
+            clientId: foundryProject.identity.principalId
+          }
         isSharedToAll: true
         metadata: {
         ApiType: 'Azure'
@@ -388,6 +393,10 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
         name: 'projectKeyVaultConnection'
         properties: {
           category: 'AzureKeyVault'
+          authType: 'ManagedIdentity'
+          credentials: {
+            clientId: foundryProject.identity.principalId
+          }
           target: keyVault.id
           useWorkspaceManagedIdentity: true
           isSharedToAll: true
