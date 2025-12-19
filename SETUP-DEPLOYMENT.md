@@ -89,12 +89,15 @@ Go to your GitHub repository:
 
 In the same **Settings** → **Secrets and variables** → **Actions** page:
 1. Click the **Variables** tab
-2. Click **New repository variable** and add these **2 variables**:
+2. Click **New repository variable** and add these **3 variables**:
 
 | Variable Name | Value | Example |
 |--------------|-------|---------|
+| `PROJECT_NAME` | Unique project identifier (lowercase, no spaces) | `fiqftcosmos` |
 | `AZURE_RESOURCE_GROUP` | Your resource group name | `rg-foundryiq-ft-cosmos` |
 | `AZURE_LOCATION` | Azure region | `eastus` |
+
+**Important**: `PROJECT_NAME` is used to generate resource names (e.g., `{PROJECT_NAME}-cdb` for Cosmos DB, `{PROJECT_NAME}-mcpapi` for Web App). Keep it short and unique to avoid Azure naming conflicts.
 
 ---
 

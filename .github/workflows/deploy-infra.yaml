@@ -33,6 +33,6 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
           template: ./infra/main-simple.bicep
-          parameters: location=${{ vars.AZURE_LOCATION }}
+          parameters: location=${{ vars.AZURE_LOCATION }} projectName=${{ vars.PROJECT_NAME }}
           failOnStdErr: false
           deploymentName: infra-${{ github.run_number }}-${{ github.sha }}
