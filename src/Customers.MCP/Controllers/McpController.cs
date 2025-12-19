@@ -242,36 +242,15 @@ public class McpController : ControllerBase
     {
         return toolName.ToLowerInvariant() switch
         {
-            "list_databases" => await _cosmosDbTools.ListDatabases(cancellationToken),
-            "list_collections" => await _cosmosDbTools.ListCollections(GetStringArg(args, "databaseId"), cancellationToken),
             "get_recent_documents" => await _cosmosDbTools.GetRecentDocuments(
                 GetStringArg(args, "databaseId"),
                 GetStringArg(args, "containerId"),
-                GetRequiredIntArg(args, "n"),
-                cancellationToken),
-            "text_search" => await _cosmosDbTools.TextSearch(
-                GetStringArg(args, "databaseId"),
-                GetStringArg(args, "containerId"),
-                GetStringArg(args, "property"),
-                GetStringArg(args, "searchPhrase"),
                 GetRequiredIntArg(args, "n"),
                 cancellationToken),
             "find_document_by_id" => await _cosmosDbTools.FindDocumentByID(
                 GetStringArg(args, "databaseId"),
                 GetStringArg(args, "containerId"),
                 GetStringArg(args, "id"),
-                cancellationToken),
-            "get_approximate_schema" => await _cosmosDbTools.GetApproximateSchema(
-                GetStringArg(args, "databaseId"),
-                GetStringArg(args, "containerId"),
-                cancellationToken),
-            "vector_search" => await _cosmosDbTools.VectorSearch(
-                GetStringArg(args, "databaseId"),
-                GetStringArg(args, "containerId"),
-                GetStringArg(args, "searchText"),
-                GetStringArg(args, "vectorProperty"),
-                GetStringArg(args, "selectProperties"),
-                GetRequiredIntArg(args, "topN"),
                 cancellationToken),
             _ => throw new ArgumentException($"Unknown tool: {toolName}")
         };
