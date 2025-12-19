@@ -203,7 +203,7 @@ resource storageTableDataContributorRole 'Microsoft.Authorization/roleAssignment
 
 resource azureAIUserRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   scope: subscription()
-  name: '297cd1f0-0490-4d6e-a7b6-579935699396'
+  name: '53ca6127-db72-4b80-b1b0-d745d6d5456d'
 }
 
 // Azure AI User role assignment for user-assigned managed identity
@@ -343,9 +343,8 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
       name: 'keyVaultConnection'
       properties: {
         category: 'AzureKeyVault'
-        authType: 'ManagedIdentity'
         target: keyVault.id
-        useWorkspaceManagedIdentity: true
+        useWorkspaceManagedIdentity: false
         isSharedToAll: true
         metadata: {
         ApiType: 'Azure'
@@ -369,6 +368,52 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
         metadata: {
           ApiType: 'Azure'
           ResourceId: storageAccount.id
+        }
+      }
+    }
+
+    resource foundryProject 'projects@2025-06-01' = {
+      name: projectName
+      location: location
+      kind: 'AIServices'
+      identity: {
+        type: 'SystemAssigned'
+      }
+      properties: {
+        description: 'Foundry ft Cosmos project'
+        displayName: 'Foundry ft Cosmos'
+      }
+
+      resource projectKeyVaultConnection 'connections@2025-06-01' = {
+        name: 'projectKeyVaultConnection'
+        properties: {
+          category: 'AzureKeyVault'
+          target: keyVault.id
+          useWorkspaceManagedIdentity: true
+          isSharedToAll: true
+          metadata: {
+            ApiType: 'Azure'
+            ResourceId: keyVault.id
+            location: location
+          }
+        }
+      }
+
+      resource projectStorageConnection 'connections@2025-06-01' = {
+        name: 'projectStorageConnection'
+        properties: {
+          authType: 'AAD'
+          category: 'AzureStorageAccount'
+          target: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/'
+          useWorkspaceManagedIdentity: true
+          isSharedToAll: false
+          sharedUserList: []
+          peRequirement: 'NotRequired'
+          peStatus: 'NotApplicable'
+          metadata: {
+            ApiType: 'Azure'
+            ResourceId: storageAccount.id
+          }
         }
       }
     }
