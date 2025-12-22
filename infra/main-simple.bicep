@@ -138,7 +138,7 @@ resource webApp 'Microsoft.Web/sites@2024-11-01' = {
       linuxFxVersion: 'DOTNETCORE|10.0'
       appSettings: [
         {
-          name: 'CosmosDb__Endpoint'
+          name: 'COSMOS_ENDPOINT'
           value: cosmosDbAccount.properties.documentEndpoint
         }
         {
