@@ -366,22 +366,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
       }
     }
 
-    resource keyVaultConnection 'connections@2025-04-01-preview' = {
-      name: 'keyVaultConnection'
-      properties: {
-        category: keyVault.id
-        target: keyVault.id
-        useWorkspaceManagedIdentity: false
-        authType: 'AccountManagedIdentity'
-        isSharedToAll: true
-        metadata: {
-          ApiType: 'Azure'
-          ResourceId: keyVault.id
-          Location: location
-        }
-      }
-    }
-
     resource foundryProject 'projects@2025-06-01' = {
       name: projectName
       location: location
@@ -410,22 +394,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
           }
         }
       }
-
-      resource projectKeyVaultConnection 'connections@2025-04-01-preview' = {
-      name: 'projectKeyVaultConnection'
-      properties: {
-        category: keyVault.id
-        target: 'https://fiqftcosmos-kv.vault.azure.net/'
-        useWorkspaceManagedIdentity: false
-        authType: 'AccountManagedIdentity'
-        isSharedToAll: true
-        metadata: {
-          ApiType: 'Azure'
-          ResourceId: keyVault.id
-          Location: location
-        }
-      }
-    }
     }
 }
 
