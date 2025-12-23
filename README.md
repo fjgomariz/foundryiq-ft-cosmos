@@ -156,6 +156,11 @@ All inter-service communication uses **User Assigned Managed Identities (UAMI)**
 - Role-based access control (RBAC) at every layer
 - Azure-native identity federation for secure, zero-trust architecture
 
+
+![Architecture Diagram](images/arch.png)
+
+The diagram above illustrates the complete solution architecture, showing how the three core components work together to enable agent-driven RAG scenarios with dual approaches for content retrieval.
+
 ---
 
 ## 🔐 Security Architecture: Managed Identities Only
