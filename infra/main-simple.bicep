@@ -348,24 +348,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
     name: 'S0'
   }
 
-    resource storageConnection 'connections@2025-06-01' = {
-      name: 'storageConnection'
-      properties: {
-        authType: 'AAD'
-        category: 'AzureStorageAccount'
-        target: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/'
-        useWorkspaceManagedIdentity: false
-        isSharedToAll: false
-        sharedUserList: []
-        peRequirement: 'NotRequired'
-        peStatus: 'NotApplicable'
-        metadata: {
-          ApiType: 'Azure'
-          ResourceId: storageAccount.id
-        }
-      }
-    }
-
     resource foundryProject 'projects@2025-06-01' = {
       name: projectName
       location: location
@@ -375,24 +357,6 @@ resource foundry 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
       properties: {
         description: 'Foundry ft Cosmos project'
         displayName: 'Foundry ft Cosmos'
-      }
-
-      resource projectStorageConnection 'connections@2025-06-01' = {
-        name: 'projectStorageConnection'
-        properties: {
-          authType: 'AAD'
-          category: 'AzureStorageAccount'
-          target: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/'
-          useWorkspaceManagedIdentity: true
-          isSharedToAll: false
-          sharedUserList: []
-          peRequirement: 'NotRequired'
-          peStatus: 'NotApplicable'
-          metadata: {
-            ApiType: 'Azure'
-            ResourceId: storageAccount.id
-          }
-        }
       }
     }
 }
