@@ -22,8 +22,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Cosmos DB Client
-var cosmosEndpoint = builder.Configuration["COSMOSDB_ENDPOINT"] 
-    ?? throw new InvalidOperationException("COSMOSDB_ENDPOINT configuration is missing");
+var cosmosEndpoint = builder.Configuration["COSMOS_ENDPOINT"] 
+    ?? throw new InvalidOperationException("COSMOS_ENDPOINT configuration is missing");
 
 builder.Services.AddSingleton<CosmosClient>(sp =>
 {

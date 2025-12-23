@@ -110,6 +110,33 @@ public class McpController : ControllerBase
                                         },
                                         required = new string[] { "databaseId", "containerId", "id" }
                                     }
+                                },
+                                new { 
+                                    name = "get_customer_services", 
+                                    description = "Gets a list of all distinct Azure services used by a specific customer.",
+                                    inputSchema = new {
+                                        type = "object",
+                                        properties = new {
+                                            databaseId = new { type = "string", description = "Database id containing the container" },
+                                            containerId = new { type = "string", description = "Container id to query" },
+                                            customerName = new { type = "string", description = "Name of the customer to query" }
+                                        },
+                                        required = new string[] { "databaseId", "containerId", "customerName" }
+                                    }
+                                },
+                                new { 
+                                    name = "get_customer_service_spending", 
+                                    description = "Gets the total spending and transaction count for a specific customer on a specific Azure service.",
+                                    inputSchema = new {
+                                        type = "object",
+                                        properties = new {
+                                            databaseId = new { type = "string", description = "Database id containing the container" },
+                                            containerId = new { type = "string", description = "Container id to query" },
+                                            customerName = new { type = "string", description = "Name of the customer" },
+                                            serviceName = new { type = "string", description = "Name of the Azure service" }
+                                        },
+                                        required = new string[] { "databaseId", "containerId", "customerName", "serviceName" }
+                                    }
                                 }
                             }
                         }
@@ -251,6 +278,17 @@ public class McpController : ControllerBase
                 GetStringArg(args, "databaseId"),
                 GetStringArg(args, "containerId"),
                 GetStringArg(args, "id"),
+                cancellationToken),
+            "get_customer_services" => await _cosmosDbTools.GetCustomerServices(
+                GetStringArg(args, "databaseId"),
+                GetStringArg(args, "containerId"),
+                GetStringArg(args, "customerName"),
+                cancellationToken),
+            "get_customer_service_spending" => await _cosmosDbTools.GetCustomerServiceSpending(
+                GetStringArg(args, "databaseId"),
+                GetStringArg(args, "containerId"),
+                GetStringArg(args, "customerName"),
+                GetStringArg(args, "serviceName"),
                 cancellationToken),
             _ => throw new ArgumentException($"Unknown tool: {toolName}")
         };
