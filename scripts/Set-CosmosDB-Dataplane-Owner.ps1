@@ -25,7 +25,7 @@ if ([string]::IsNullOrWhiteSpace($PrincipalId) -or
     [string]::IsNullOrWhiteSpace($ResourceGroup) -or 
     [string]::IsNullOrWhiteSpace($CosmosAccount)) {
     
-    Write-Host "Usage: .\set_cosmosdb_dataplane_owner.ps1 <PRINCIPAL_ID> <RESOURCE_GROUP> <COSMOS_ACCOUNT>"
+    Write-Host "Usage: .\Set-CosmosDB-Dataplane-Owner.ps1 <PRINCIPAL_ID> <RESOURCE_GROUP> <COSMOS_ACCOUNT>"
     Write-Host ""
     Write-Host "Parameters:"
     Write-Host "  PRINCIPAL_ID    - The application/managed identity principal ID (object ID)"
@@ -33,7 +33,7 @@ if ([string]::IsNullOrWhiteSpace($PrincipalId) -or
     Write-Host "  COSMOS_ACCOUNT  - The name of the Cosmos DB account"
     Write-Host ""
     Write-Host "Example:"
-    Write-Host "  .\set_cosmosdb_dataplane_owner.ps1 aaaaaaaa-bbbb-cccc-1111-222222222222 rg-myapp cosmosdb-myapp"
+    Write-Host "  .\Set-CosmosDB-Dataplane-Owner.ps1 aaaaaaaa-bbbb-cccc-1111-222222222222 rg-myapp cosmosdb-myapp"
     exit 1
 }
 

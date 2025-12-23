@@ -4,7 +4,7 @@ using Azure.Identity;
 using System.Text.RegularExpressions;
 using Azure.AI.OpenAI;
 
-namespace AzureCosmosDB.MCP.Toolkit.Services;
+namespace Customers.MCP.Services;
 
 public class CosmosDbToolsService
 {

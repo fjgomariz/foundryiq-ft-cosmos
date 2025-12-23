@@ -1,4 +1,4 @@
-using AzureCosmosDB.MCP.Toolkit.Services;
+using Customers.MCP.Services;
 using Azure.Identity;
 using Microsoft.Azure.Cosmos;
 

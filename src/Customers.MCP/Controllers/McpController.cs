@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AzureCosmosDB.MCP.Toolkit.Services;
+using Customers.MCP.Services;
 
 namespace Customers.MCP.Controllers;
 
@@ -39,9 +39,6 @@ public class McpController : ControllerBase
 
         try
         {
-            // // Log authentication information
-            // _logger.LogInformation("Received MCP request: {Method} with ID: {Id} from {UserInfo}", 
-            //     method, id, _authService.GetUserIdentityInfo());
             _logger.LogInformation("Full request body: {RequestBody}", requestJson.GetRawText());
 
             // Set proper headers for streaming response and CORS
@@ -146,25 +143,6 @@ public class McpController : ControllerBase
                     return new JsonResult(toolsResponse);
 
                 case "tools/call":
-                    // Check for MCP Tool Executor role before executing tools
-                    // _logger.LogInformation("tools/call request - Auth enabled: {AuthEnabled}, User authenticated: {IsAuth}", 
-                    //     _authService.IsAuthenticationEnabled(), 
-                    //     User?.Identity?.IsAuthenticated ?? false);
-                    
-                    // if (User != null)
-                    // {
-                    //     _logger.LogInformation("User claims: {Claims}", 
-                    //         string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}")));
-                    //     _logger.LogInformation("Checking role 'Mcp.Tool.Executor': {HasRole}", 
-                    //         User.IsInRole("Mcp.Tool.Executor"));
-                    // }
-                    
-                    // if (_authService.IsAuthenticationEnabled() && User?.Identity?.IsAuthenticated == true && !User.IsInRole("Mcp.Tool.Executor"))
-                    // {
-                    //     _logger.LogWarning("User does not have Mcp.Tool.Executor role. User roles: {Roles}", 
-                    //         string.Join(", ", User.Claims.Where(c => c.Type == "roles" || c.Type.EndsWith("/role")).Select(c => c.Value)));
-                    //     return Forbid("Insufficient permissions. The 'Mcp.Tool.Executor' role is required to execute tools.");
-                    // }
 
                     if (paramsObj.HasValue && paramsObj.Value.TryGetProperty("name", out var toolNameProp))
                     {

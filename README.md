@@ -120,11 +120,13 @@ The solution consists of three core components working together to enable agent-
 
 ### 1. Model Context Protocol (MCP) Server for Cosmos DB
 
-A **Web API** implementing the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) specification, providing:
+A **Web API** implementing the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) specification based on this [repo](https://github.com/AzureCosmosDB/MCPToolKit/), providing:
 - Structured access to Azure Cosmos DB data for Microsoft Foundry agents
 - Tool-based interface for retrieving recent documents and querying by ID
 - Identity-based authentication using Azure Managed Identities
 - Built-in observability via Application Insights
+
+> **⚠️ Security Notice:** This demo implementation **does not include authentication or authorization** on the MCP API endpoints. All HTTP endpoints are publicly accessible without authentication. This approach is **intentionally simplified for learning and debugging purposes only**. In a production environment, you must implement proper authentication (e.g., Azure AD, API keys, managed identity validation) and authorization controls to secure your MCP server endpoints.
 
 **Key Features:**
 - Exposes Cosmos DB operations as MCP tools
@@ -214,7 +216,7 @@ Foundry agents may need to store and retrieve API keys, connection strings, or o
 The Web App hosting the MCP server requires **Cosmos DB data plane permissions** to query containers and retrieve documents.
 
 **Configured via PowerShell script:**  
-The [`set_cosmosdb_dataplane_owner.ps1`](scripts/set_cosmosdb_dataplane_owner.ps1) script assigns a **custom Cosmos DB role** with the following permissions:
+The [`Set-CosmosDB-Dataplane-Owner.ps1`](scripts/Set-CosmosDB-Dataplane-Owner.ps1) script assigns a **custom Cosmos DB role** with the following permissions:
 
 ```json
 {
@@ -343,7 +345,7 @@ Foundry IQ **abstracts and automates** much of the manual work:
 |---------------|---------------|-------------|
 | `PROJECT_NAME` | `fiqftcosmos` | Unique project identifier (lowercase, no spaces) |
 | `AZURE_RESOURCE_GROUP` | `rg-foundryiq-ft-cosmos` | Resource group name |
-| `AZURE_LOCATION` | `eastus` | Azure region for deployment |
+| `AZURE_LOCATION` | `swedencentral` | Azure region for deployment |
 
 > **Note:** `PROJECT_NAME` is used as a prefix for all resource names (e.g., `{PROJECT_NAME}-cdb` for Cosmos DB).
 
@@ -401,7 +403,7 @@ Refer to [SETUP-DEPLOYMENT.md](SETUP-DEPLOYMENT.md) for detailed step-by-step in
 
 ## 🛠️ Post-Deployment Configuration
 
-After deploying the infrastructure and MCP API, assign **Cosmos DB data plane permissions** to the Web App managed identity, Foundry user managed identity and and yourself:
+After deploying the infrastructure and MCP API, assign **Cosmos DB data plane permissions** to the Web App managed identity, Foundry user managed identity and yourself:
 
 ```bash
 # Get the Web App's system assigned managed identity principal ID
@@ -411,7 +413,7 @@ PRINCIPAL_ID=$(az webapp identity show \
   --query principalId -o tsv)
 
 # Run the PowerShell script to grant Cosmos DB access
-pwsh ./scripts/set_cosmosdb_dataplane_owner.ps1 \
+pwsh ./scripts/Set-CosmosDB-Dataplane-Owner.ps1 \
   $PRINCIPAL_ID \
   {RESOURCE_GROUP_NAME} \
   {PROJECT_NAME}-cdb
@@ -622,40 +624,6 @@ Gets the total spending and transaction count for a specific customer on a speci
 }
 ```
 
-### Use Cases for MCP Tools
-
-These tools enable intelligent agent interactions such as:
-
-- **Customer analysis:** "Which Azure services does LinguatechAI use?"
-- **Spending insights:** "How much has SentinelAI spent on Azure OpenAI?"
-- **Financial reporting:** "Show me the total spending for FitBite across all services"
-- **Trend analysis:** "What are the most recent transactions for NovaAgentics?"
-- **Cross-referencing:** Combine spending data (Cosmos DB) with company documentation (Azure AI Search/Foundry) for comprehensive sales insights
-
----
-
-## 🎓 Target Audience
-
-This repository is designed for:
-
-- **Cloud Architects** exploring and evaluating RAG implementation strategies on Azure
-- **AI Engineers** learning to build agent-based solutions with Foundry
-- **Developers** comparing Azure AI Search vs Foundry Content Understanding in a sandbox environment
-- **DevOps Teams** seeking Infrastructure as Code examples for AI workloads
-- **Technical Decision Makers** who need a hands-on demo environment to assess capabilities
-
----
-
-## 🔍 Key Takeaways
-
-1. **Foundry IQ simplifies RAG** by abstracting index management, skillset configuration, and retrieval orchestration.
-2. **Managed Identities** provide a secure, zero-trust authentication model across all Azure services.
-3. **Infrastructure as Code** ensures reproducible, auditable deployments via Bicep and GitHub Actions.
-4. **MCP servers** enable structured, tool-based access to enterprise data for AI agents.
-5. **Classic Azure AI Search** remains the right choice for scenarios requiring fine-grained control over indexing and ranking.
-6. **This demo environment** provides a foundation — additional security hardening, monitoring, scaling, and governance controls are required for production use.
-
----
 
 ## 📚 Additional Resources
 
