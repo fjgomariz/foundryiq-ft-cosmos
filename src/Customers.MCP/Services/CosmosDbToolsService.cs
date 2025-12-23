@@ -207,7 +207,7 @@ public class CosmosDbToolsService
             var container = _cosmosClient.GetContainer(databaseId, containerId);
             var queryText = @"
                 SELECT 
-                    SUM(TONUMBER(c.amount)) as total_spending,
+                    SUM(c.amount) as total_spending,
                     COUNT(1) as transaction_count,
                     c.customer_name,
                     c.service_name,
