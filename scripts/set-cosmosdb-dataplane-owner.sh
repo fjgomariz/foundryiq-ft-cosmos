@@ -92,14 +92,17 @@ else
 }
 EOF
     
-    # Create the role definition
-    ROLE_OUTPUT=$(az cosmosdb sql role definition create \
+    # Create the role definition and extract ID using Azure CLI query
+    ROLE_DEFINITION_ID=$(az cosmosdb sql role definition create \
         --resource-group "${RESOURCE_GROUP}" \
         --account-name "${COSMOS_ACCOUNT}" \
-        --body "@${TEMP_FILE}")
+        --body "@${TEMP_FILE}" \
+        --query "id" -o tsv)
     
-    # Extract role definition ID from JSON output
-    ROLE_DEFINITION_ID=$(echo "${ROLE_OUTPUT}" | grep -o '"id": "[^"]*"' | head -1 | sed 's/"id": "\([^"]*\)"/\1/')
+    if [[ -z "${ROLE_DEFINITION_ID}" ]]; then
+        echo "Error: Failed to create role definition or extract role definition ID" >&2
+        exit 1
+    fi
     
     echo "✓ Created role definition: ${ROLE_DEFINITION_ID}"
 fi
@@ -107,12 +110,25 @@ fi
 # Extract just the GUID from the full role definition ID (last path segment)
 ROLE_DEFINITION_GUID=$(basename "${ROLE_DEFINITION_ID}")
 
+# Validate that GUID extraction was successful
+if [[ -z "${ROLE_DEFINITION_GUID}" ]]; then
+    echo "Error: Failed to extract role definition GUID from: ${ROLE_DEFINITION_ID}" >&2
+    exit 1
+fi
+
 echo ""
 
 # Step 2: Get the account scope
 echo "[2/3] Getting Cosmos DB account scope..."
 
-SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+SUBSCRIPTION_ID=$(az account show --query id -o tsv 2>/dev/null || echo "")
+
+if [[ -z "${SUBSCRIPTION_ID}" ]]; then
+    echo "Error: Failed to get subscription ID. Please ensure you are logged in to Azure CLI." >&2
+    echo "Run 'az login' to authenticate." >&2
+    exit 1
+fi
+
 ACCOUNT_SCOPE="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.DocumentDB/databaseAccounts/${COSMOS_ACCOUNT}"
 
 echo "✓ Account scope: ${ACCOUNT_SCOPE}"
@@ -138,7 +154,7 @@ else
         --account-name "${COSMOS_ACCOUNT}" \
         --role-definition-id "${ROLE_DEFINITION_GUID}" \
         --principal-id "${PRINCIPAL_ID}" \
-        --scope "${ACCOUNT_SCOPE}" > /dev/null
+        --scope "${ACCOUNT_SCOPE}"
     
     echo "✓ Role assignment created successfully"
 fi
