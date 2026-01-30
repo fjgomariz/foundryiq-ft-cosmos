@@ -220,8 +220,8 @@ Foundry agents may need to store and retrieve API keys, connection strings, or o
 
 The Web App hosting the MCP server requires **Cosmos DB data plane permissions** to query containers and retrieve documents.
 
-**Configured via PowerShell script:**  
-The [`Set-CosmosDB-Dataplane-Owner.ps1`](scripts/Set-CosmosDB-Dataplane-Owner.ps1) script assigns a **custom Cosmos DB role** with the following permissions:
+**Configured via script:**  
+Use either the [`set-cosmosdb-dataplane-owner.sh`](scripts/set-cosmosdb-dataplane-owner.sh) (Bash) or [`Set-CosmosDB-Dataplane-Owner.ps1`](scripts/Set-CosmosDB-Dataplane-Owner.ps1) (PowerShell) script to assign a **custom Cosmos DB role** with the following permissions:
 
 ```json
 {
@@ -409,6 +409,24 @@ Refer to [SETUP-DEPLOYMENT.md](SETUP-DEPLOYMENT.md) for detailed step-by-step in
 ## 🛠️ Post-Deployment Configuration
 
 After deploying the infrastructure and MCP API, assign **Cosmos DB data plane permissions** to the Web App managed identity, Foundry user managed identity and yourself:
+
+**Option 1: Using Bash script**
+
+```bash
+# Get the Web App's system assigned managed identity principal ID
+PRINCIPAL_ID=$(az webapp identity show \
+  --name {PROJECT_NAME}-mcpapi \
+  --resource-group {RESOURCE_GROUP_NAME} \
+  --query principalId -o tsv)
+
+# Run the Bash script to grant Cosmos DB access
+./scripts/set-cosmosdb-dataplane-owner.sh \
+  $PRINCIPAL_ID \
+  {RESOURCE_GROUP_NAME} \
+  {PROJECT_NAME}-cdb
+```
+
+**Option 2: Using PowerShell script**
 
 ```bash
 # Get the Web App's system assigned managed identity principal ID
