@@ -11,7 +11,7 @@ The goal is to provide a practical, hands-on comparison between:
 1. **Microsoft Foundry IQ** — A comprehensive agent framework with built-in Content Understanding that abstracts index management, enrichment pipelines, and semantic retrieval.
 2. **Classic Azure AI Search** — A manual approach requiring explicit configuration of indexes, indexers, data sources, and skillsets.
 
-This repository includes fully automated **Infrastructure as Code (Bicep)** and **GitHub Actions workflows** to deploy a demo environment that illustrates both approaches on Azure. Use this as a starting point to explore, learn, and build your own production-grade solutions.
+This repository includes fully automated **Infrastructure as Code (Terraform)** and **GitHub Actions workflows** to deploy a demo environment that illustrates both approaches on Azure. Use this as a starting point to explore, learn, and build your own production-grade solutions.
 
 ---
 
@@ -134,7 +134,7 @@ A **Web API** implementing the [Model Context Protocol (MCP)](https://modelconte
 - Enables agents to securely retrieve enterprise data stored in Cosmos DB
 - Follows Azure best practices for service-to-service authentication
 
-### 2. Azure Infrastructure (Bicep Templates)
+### 2. Azure Infrastructure (Terraform)
 
 **Fully automated deployment** of all required Azure resources:
 
