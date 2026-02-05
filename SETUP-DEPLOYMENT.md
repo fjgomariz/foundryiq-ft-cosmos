@@ -107,6 +107,8 @@ This repository has two automated deployment workflows:
 
 ### 1. Infrastructure Deployment (`deploy-infra.yaml`)
 
+**Technology**: Terraform
+
 **Triggers**: 
 - Push to `main` branch with changes in `infra/**`
 - Manual trigger via workflow_dispatch
@@ -118,8 +120,19 @@ This repository has two automated deployment workflows:
 - Azure AI Search with user-assigned managed identity
 - Key Vault
 - Application Insights
+- User-assigned managed identities for services
+- Role assignments for RBAC permissions
 
 **Outputs**: Cosmos DB endpoint, Application Insights connection string, web app name
+
+**Process**:
+1. Checks out code
+2. Sets up Terraform
+3. Authenticates to Azure via OIDC
+4. Runs `terraform init`
+5. Runs `terraform plan` with variables
+6. Runs `terraform apply`
+7. Exports outputs for downstream workflows
 
 ### 2. MCP API Deployment (`deploy-mcp.yaml`)
 
@@ -226,7 +239,7 @@ To add more app settings, update the "Configure App Settings" step in [.github/w
 ✅ **GitHub Secrets**: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`  
 ✅ **GitHub Variables**: `PROJECT_NAME`, `AZURE_RESOURCE_GROUP`, `AZURE_LOCATION`  
 ✅ **Workflows**: 
-  - Infrastructure deployment (triggers on `infra/**` changes)
+  - Infrastructure deployment with Terraform (triggers on `infra/**` changes)
   - MCP API deployment (triggers on `src/Customers.MCP/**` changes)
 
 **Security Benefits**:
@@ -235,7 +248,19 @@ To add more app settings, update the "Configure App Settings" step in [.github/w
 - Azure manages trust via federated credentials
 
 **Deployment Flow**:
-1. Infrastructure deploys → Creates all Azure resources
+1. Infrastructure deploys with Terraform → Creates all Azure resources with state management
 2. MCP API deploys → Builds .NET 10 app and deploys to Web App
 3. Configuration is automatic (Cosmos DB endpoint, Application Insights)
+
+## Infrastructure Technology
+
+This project uses **Terraform** for infrastructure as code. The Terraform configuration files are located in the `infra/` directory:
+
+- `main.tf` - Main resource definitions
+- `providers.tf` - Provider configuration
+- `variables.tf` - Input variables
+- `outputs.tf` - Output values
+- `terraform.tfvars.example` - Example variable values
+
+For local development and testing, see [infra/README.md](infra/README.md) for detailed Terraform usage instructions.
 

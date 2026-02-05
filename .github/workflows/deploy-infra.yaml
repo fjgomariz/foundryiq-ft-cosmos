@@ -19,6 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.0"
+
       - name: Azure Login (OIDC)
         uses: azure/login@v2
         with:
@@ -26,13 +31,47 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy Bicep to Azure
-        uses: azure/arm-deploy@v2
-        with:
-          scope: resourcegroup
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: ${{ vars.AZURE_RESOURCE_GROUP }}
-          template: ./infra/main-simple.bicep
-          parameters: location=${{ vars.AZURE_LOCATION }} projectName=${{ vars.PROJECT_NAME }}
-          failOnStdErr: false
-          deploymentName: infra-${{ github.run_number }}-${{ github.sha }}
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./infra
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_USE_OIDC: true
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var="project_name=${{ vars.PROJECT_NAME }}" \
+            -var="location=${{ vars.AZURE_LOCATION }}" \
+            -var="resource_group_name=${{ vars.AZURE_RESOURCE_GROUP }}" \
+            -out=tfplan
+        working-directory: ./infra
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_USE_OIDC: true
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+        working-directory: ./infra
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_USE_OIDC: true
+
+      - name: Terraform Output
+        id: terraform_output
+        run: |
+          echo "cosmos-endpoint=$(terraform output -raw COSMOS_DB_ENDPOINT)" >> $GITHUB_OUTPUT
+          echo "app-insights-connection=$(terraform output -raw APPLICATION_INSIGHTS_CONNECTION_STRING)" >> $GITHUB_OUTPUT
+          echo "web-app-name=$(terraform output -raw WEB_APP_NAME)" >> $GITHUB_OUTPUT
+        working-directory: ./infra
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_USE_OIDC: true
